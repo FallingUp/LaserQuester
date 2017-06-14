@@ -29,7 +29,7 @@ function create() {
     bullets.createMultiple(30, 'bullet');
     bullets.setAll('anchor.x', 0.5);
     bullets.setAll('anchor.y', 1);
-    bullets.setAll('outOfBoundsKill', true)
+    bullets.setAll('outOfBoundsKill', true);
     bullets.setAll('checkWorldBounds', true);
 
     //  The hero!
@@ -57,17 +57,15 @@ function create() {
 
 function update() {
     // Scroll the background
-    starfield.tilePosition.y +=2;
+    starfield.tilePosition.y += 2;
     
     // Reset the player, then check for movement keys
     player.body.acceleration.x = 0;
     
-    if (cursors.left.isDown)
-        {
+    if (cursors.left.isDown) {
             player.body.acceleration.x = -ACCELERATION;
         }
-    else if (cursors.right.isDown)
-        {
+    else if (cursors.right.isDown) {
             player.body.acceleration.x = ACCELERATION;
         }
     
