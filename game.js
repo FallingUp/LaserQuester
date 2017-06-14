@@ -41,6 +41,7 @@ function create() {
     
     // And some controls to play the game with
     cursors = game.input.keyboard.createCursorKeys();
+    fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     
     // Add an emitter for the ship's trail
     shipTrail = game.add.emitter(player.x, player.body + 10, 400);
@@ -80,6 +81,11 @@ function update() {
         player.body.acceleration.x = 0;
     }
     
+    // Fire bullet
+    if (fireButton.isDown || game.input.activePointer.isDown) {
+        firebullet();
+    }
+    
     // Move ship towards mouse pointer
     if (game.input.x < game.width - 20 &&
         game.input.x > 20 &&
@@ -89,6 +95,17 @@ function update() {
         var dist = game.input.x - player.x;
         player.body.velocity.x = MAXSPEED * game.math.clamp(dist / minDist, -1, 1);
     }
+    
+function fireBullet() {
+    // Grab the first bullet we can from the pool
+    var bullet = bullets.getFirstExists(false);
+    
+    if (bullet) {
+            // And fire it
+            bullet.reset(player.x, player.y + 8);
+            bullet.body.velocity.y = -400;
+        }
+}
     
     // Squish and rotate ship for illusion of "banking"
     bank = player.body.velocity.x / MAXSPEED;
