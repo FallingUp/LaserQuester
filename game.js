@@ -36,7 +36,7 @@ function update() {
     
     if (cursors.left.isDown)
         {
-            player.body.acceleration.x = ACCELERATION;
+            player.body.acceleration.x = -ACCELERATION;
         }
     else if (cursors.right.isDown)
         {
