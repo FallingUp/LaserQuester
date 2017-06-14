@@ -5,6 +5,8 @@ var starfield;
 var cursors;
 var bank;
 var shipTrail;
+var bullets;
+var fireButton;
 
 var ACCELERATION = 600;
 var DRAG = 400;
@@ -19,6 +21,16 @@ function preload() {
 function create() {
     //  The scrolling starfield background
     starfield = game.add.tileSprite(0, 0, 800, 600, 'starfield');
+    
+    // Our bullet group
+    bullets = game.add.group();
+    bullets.enableBody = true;
+    bullets.physicsBodyType = Phaser.Physics.ARCADE;
+    bullets.createMultiple(30, 'bullet');
+    bullets.setAll('anchor.x', 0.5);
+    bullets.setAll('anchor.y', 1);
+    bullets.setAll('outOfBoundsKill', true)
+    bullets.setAll('checkWorldBounds', true);
 
     //  The hero!
     player = game.add.sprite(400, 500, 'ship');
@@ -66,6 +78,16 @@ function update() {
     if (player.x < 50) {
         player.x = 50;
         player.body.acceleration.x = 0;
+    }
+    
+    // Move ship towards mouse pointer
+    if (game.input.x < game.width - 20 &&
+        game.input.x > 20 &&
+        game.input.y > 20 &&
+        game.input.y < game.height - 20) {
+        var minDist = 200;
+        var dist = game.input.x - player.x;
+        player.body.velocity.x = MAXSPEED * game.math.clamp(dist / minDist, -1, 1);
     }
     
     // Squish and rotate ship for illusion of "banking"
