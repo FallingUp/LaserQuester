@@ -62,12 +62,14 @@ function update() {
     // Reset the player, then check for movement keys
     player.body.acceleration.x = 0;
     
-    if (cursors.left.isDown) {
+    if (cursors.left.isDown)
+    {
             player.body.acceleration.x = -ACCELERATION;
-        }
-    else if (cursors.right.isDown) {
+    }
+    else if (cursors.right.isDown)
+    {
             player.body.acceleration.x = ACCELERATION;
-        }
+    }
     
     // Stop at screen edge
     if (player.x > game.width - 50) {
