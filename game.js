@@ -108,12 +108,13 @@ function render() {
 }    
     
 function fireBullet() {
-    // Grab the first bullet we can from the pool
+    //  Grab the first bullet we can from the pool
     var bullet = bullets.getFirstExists(false);
-    
-    if (bullet) {
-            // And fire it
-            bullet.reset(player.x, player.y + 8);
-            bullet.body.velocity.y = -400;
-        }
+
+    if (bullet)
+    {
+        //  And fire it
+        bullet.reset(player.x, player.y + 8);
+        bullet.body.velocity.y = -400;
+    }
 }
