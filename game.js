@@ -5,7 +5,7 @@ var starfield;
 var cursors;
 var bank;
 var shipTrail;
-var bullet;
+var bullets;
 var fireButton;
 
 var ACCELERATION = 600;
@@ -44,7 +44,7 @@ function create() {
     fireButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
     
     // Add an emitter for the ship's trail
-    shipTrail = game.add.emitter(player.x, player.body + 10, 400);
+    shipTrail = game.add.emitter(player.x, player.y + 10, 400);
     shipTrail.width = 10;
     shipTrail.makeParticles('bullet');
     shipTrail.setXSpeed(30, -30);
