@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'phaser-demo', {preload: preload, create: create, update: update, render: render});
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'lazerquester', {preload: preload, create: create, update: update, render: render});
 
 var player;
 var starfield;
@@ -13,9 +13,9 @@ var DRAG = 400;
 var MAXSPEED = 400;
 
 function preload() {
-    game.load.image('starfield', '/assets/starfield.png');
-    game.load.image('ship', '/assets/player.png');
-    game.load.image('bullet', '/assets/bullet.png');
+    game.load.image('starfield', 'assets/starfield.png');
+    game.load.image('ship', 'assets/player.png');
+    game.load.image('bullet', 'assets/bullet.png');
 }
 
 function create() {
