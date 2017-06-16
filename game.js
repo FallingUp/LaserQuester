@@ -108,13 +108,18 @@ function render() {
 }    
     
 function fireBullet() {
-    //  Grab the first bullet we can from the pool
+    var BULLET_SPEED = 400;
+    // Grab the first bullet we can from the pool
     var bullet = bullets.getFirstExists(false);
 
     if (bullet)
     {
-        //  And fire it
-        bullet.reset(player.x, player.y + 8);
-        bullet.body.velocity.y = -400;
+        // And fire it
+        // Make bullet come out of ship at angle as it banks
+        var bulletOffset = 20 * Math.sin(game.math.degToRad(player.angle));
+        bullet.reset(player.x + bulletOffset, player.y);
+        bullet.angle = player.angle;
+        game.physics.arcade.velocityFromAngle(bullet.angle - 90, BULLET_SPEED, bullet.body.velocity);
+        bullet.body.velocity.x += player.body.velocity.x;
     }
 }
