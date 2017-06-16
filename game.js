@@ -94,17 +94,6 @@ function update() {
         player.body.velocity.x = MAXSPEED * game.math.clamp(dist / minDist, -1, 1);
     }
     
-function fireBullet() {
-    // Grab the first bullet we can from the pool
-    var bullet = bullets.getFirstExists(false);
-    
-    if (bullet) {
-            // And fire it
-            bullet.reset(player.x, player.y + 8);
-            bullet.body.velocity.y = -400;
-        }
-}
-    
     // Squish and rotate ship for illusion of "banking"
     bank = player.body.velocity.x / MAXSPEED;
     player.scale.x = 1 - Math.abs(bank) / 2;
@@ -116,4 +105,15 @@ function fireBullet() {
 
 function render() {
 
+}    
+    
+function fireBullet() {
+    // Grab the first bullet we can from the pool
+    var bullet = bullets.getFirstExists(false);
+    
+    if (bullet) {
+            // And fire it
+            bullet.reset(player.x, player.y + 8);
+            bullet.body.velocity.y = -400;
+        }
 }
