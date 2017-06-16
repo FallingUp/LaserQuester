@@ -1,4 +1,4 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'lazerquester', {preload: preload, create: create, update: update, render: render});
+var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'lazerquester', {preload: preload, create: create, update: update, render: render});
 
 var player;
 var starfield;
@@ -105,7 +105,7 @@ function update() {
 
 function render() {
 
-}    
+}
     
 function fireBullet() {
     var BULLET_SPEED = 400;
