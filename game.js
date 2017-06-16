@@ -52,7 +52,7 @@ function create() {
     shipTrail.setRotation(50, -50);
     shipTrail.setAlpha(1, 0.01, 800);
     shipTrail.setScale(0.05, 0.4, 0.05, 0.4, 2000, Phaser.Easing.Quintic.Out);
-    shipTrail.start(false, 5000, 10);
+    shipTrail.start(true, 5000, 10);
 }
 
 function update() {
