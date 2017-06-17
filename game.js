@@ -13,9 +13,9 @@ var DRAG = 400;
 var MAXSPEED = 400;
 
 function preload() {
-    game.load.image('starfield', 'assets/starfield.png');
-    game.load.image('ship', 'assets/player.png');
-    game.load.image('bullet', 'assets/bullet.png');
+    game.load.image('starfield', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/starfield.png');
+    game.load.image('ship', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/player.png');
+    game.load.image('bullet', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/bullet.png');
 }
 
 function create() {
@@ -83,7 +83,7 @@ function update() {
     
     // Fire bullet
     if (fireButton.isDown || game.input.activePointer.isDown) {
-        firebullet();
+        fireBullet();
     }
     
     // Move ship towards mouse pointer
