@@ -19,7 +19,6 @@ function preload() {
     game.load.image('ship', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/player.png');
     game.load.image('bullet', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/bullet.png');
     game.load.image('enemy-green', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/enemy-green.png');
-    game.load.spritesheet('explosion', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/explode.png', 128, 128);
 }
 
 function create() {
@@ -53,12 +52,8 @@ function create() {
     greenEnemies.setAll('scale.x', 0.5);
     greenEnemies.setAll('scale.y', 0.5);
     greenEnemies.setAll('angle', 180);
-    greenEnemies.forEach(function(enemy){
-        addEnemyEmitterTrail(enemy);
-        enemy.events.onKilled.add(function(){
-            enemy.trail.kill();
-        });
-    });
+    greenEnemies.setAll('outOfBoundsKill', true);
+    greenEnemies.setAll('checkWorldBounds', true);
     
     launchGreenEnemy();
     
@@ -167,33 +162,8 @@ function launchGreenEnemy() {
         enemy.body.velocity.x = game.rnd.integerInRange(-300, 300);
         enemy.body.velocity.y = ENEMY_SPEED;
         enemy.body.drag.x = 100;
-        
-        enemy.trail.start(false, 800, 1);
-        
-        // Rotate enemies for illusion of banking
-        enemy.update = function(){
-            enemy.angle = 180 - game.math.radToDeg(Math.atan2(enemy.body.velocity.x, enemy.body.velocity.y));
-            
-            enemy.trail.x = enemy.x;
-            enemy.trail.y = enemy.y -10;
-            
-            // Kill enemies once they go off screen
-            if (enemy.y > game.height + 200) {
-                enemy.kill();
-            }
-        }
     }
     
     // Send another enemy soon
     game.time.events.add(game.rnd.integerInRange(MIN_ENEMY_SPACING, MAX_ENEMY_SPACING), launchGreenEnemy);
-}
-function addEnemyEmitterTrail(enemy) {
-    var enemyTrail = game.add.emitter(enemy.x, player.y - 10, 100);
-    enemyTrail.width = 10;
-    enemyTrail.makeParticles('explosion', [1,2,3,4,5]);
-    enemyTrail.setXSpeed(20, -20);
-    enemyTrail.setRotation(50, -50);
-    enemyTrail.setAlpha(0.4, 0, 800);
-    enemyTrail.setScale(0.01, 0.1, 0.01, 0.1, 1000, Phaser.Easing.Quintic.Out);
-    enemyTrail = enemyTrail;
 }
