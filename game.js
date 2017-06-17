@@ -47,13 +47,13 @@ function create() {
     greenEnemies.enableBody = true;
     greenEnemies.physicsBodyType = Phaser.Physics.ARCADE;
     greenEnemies.createMultiple(5, 'enemy-green');
-    greenEnemies.setALL('anchor.x', 0.5);
-    greenEnemies.setALL('anchor.y', 0.5);
-    greenEnemies.setALL('scale.x', 0.5);
-    greenEnemies.setALL('scale.y', 0.5);
-    greenEnemies.setALL('angle', 180);
-    greenEnemies.setALL('outOfBoundsKill', true);
-    greenEnemies.setALL('checkWorldBounds', true);
+    greenEnemies.setAll('anchor.x', 0.5);
+    greenEnemies.setAll('anchor.y', 0.5);
+    greenEnemies.setAll('scale.x', 0.5);
+    greenEnemies.setAll('scale.y', 0.5);
+    greenEnemies.setAll('angle', 180);
+    greenEnemies.setAll('outOfBoundsKill', true);
+    greenEnemies.setAll('checkWorldBounds', true);
     
     launchGreenEnemy();
     
@@ -82,11 +82,11 @@ function update() {
     
     if (cursors.left.isDown)
     {
-            player.body.acceleration.x = -ACCELERATION;
+        player.body.acceleration.x = -ACCELERATION;
     }
     else if (cursors.right.isDown)
     {
-            player.body.acceleration.x = ACCELERATION;
+        player.body.acceleration.x = ACCELERATION;
     }
     
     // Stop at screen edge
@@ -130,7 +130,7 @@ function render() {
 function fireBullet() {
     // To avoid them being allowed to fire too fast we set a time limit
     if (game.time.now > bulletTimer)
-        {
+    {
         var BULLET_SPEED = 400;
         var BULLET_SPACING = 250;
         // Grab the first bullet we can from the pool
