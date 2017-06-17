@@ -1,12 +1,14 @@
 var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'lazerquester', {preload: preload, create: create, update: update, render: render});
 
 var player;
+var greenEnemies;
 var starfield;
 var cursors;
 var bank;
 var shipTrail;
 var bullets;
 var fireButton;
+var bulletTimer = 0;
 
 var ACCELERATION = 600;
 var DRAG = 400;
@@ -16,6 +18,7 @@ function preload() {
     game.load.image('starfield', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/starfield.png');
     game.load.image('ship', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/player.png');
     game.load.image('bullet', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/bullet.png');
+    game.load.image('enemy-green', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/enemy-green.png');
 }
 
 function create() {
@@ -38,6 +41,21 @@ function create() {
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.maxVelocity.setTo(MAXSPEED, MAXSPEED);
     player.body.drag.setTo(DRAG, DRAG);
+    
+    // The baddies
+    greenEnemies = game.add.group();
+    greenEnemies.enableBody = true;
+    greenEnemies.physicsBodyType = Phaser.Physics.ARCADE;
+    greenEnemies.createMultiple(5, 'enemy-green');
+    greenEnemies.setALL('anchor.x', 0.5);
+    greenEnemies.setALL('anchor.y', 0.5);
+    greenEnemies.setALL('scale.x', 0.5);
+    greenEnemies.setALL('scale.y', 0.5);
+    greenEnemies.setALL('angle', 180);
+    greenEnemies.setALL('outOfBoundsKill', true);
+    greenEnemies.setALL('checkWorldBounds', true);
+    
+    launchGreenEnemy();
     
     // And some controls to play the game with
     cursors = game.input.keyboard.createCursorKeys();
@@ -110,18 +128,42 @@ function render() {
 }
     
 function fireBullet() {
-    var BULLET_SPEED = 400;
-    // Grab the first bullet we can from the pool
-    var bullet = bullets.getFirstExists(false);
+    // To avoid them being allowed to fire too fast we set a time limit
+    if (game.time.now > bulletTimer)
+        {
+        var BULLET_SPEED = 400;
+        var BULLET_SPACING = 250;
+        // Grab the first bullet we can from the pool
+        var bullet = bullets.getFirstExists(false);
 
-    if (bullet)
-    {
-        // And fire it
-        // Make bullet come out of ship at angle as it banks
-        var bulletOffset = 20 * Math.sin(game.math.degToRad(player.angle));
-        bullet.reset(player.x + bulletOffset, player.y);
-        bullet.angle = player.angle;
-        game.physics.arcade.velocityFromAngle(bullet.angle - 90, BULLET_SPEED, bullet.body.velocity);
-        bullet.body.velocity.x += player.body.velocity.x;
+        if (bullet)
+        {
+            // And fire it
+            // Make bullet come out of ship at angle as it banks
+            var bulletOffset = 20 * Math.sin(game.math.degToRad(player.angle));
+            bullet.reset(player.x + bulletOffset, player.y);
+            bullet.angle = player.angle;
+            game.physics.arcade.velocityFromAngle(bullet.angle - 90, BULLET_SPEED, bullet.body.velocity);
+            bullet.body.velocity.x += player.body.velocity.x;
+        
+            bulletTimer = game.time.now + BULLET_SPACING;
+        }
     }
+}
+
+function launchGreenEnemy() {
+    var MIN_ENEMY_SPACING = 300;
+    var MAX_ENEMY_SPACING = 3000;
+    var ENEMY_SPEED = 300;
+    
+    var enemy = greenEnemies.getFirstExists(false);
+    if (enemy) {
+        enemy.reset(game.rnd.integerInRange(0, game.width), -20);
+        enemy.body.velocity.x = game.rnd.integerInRange(-300, 300);
+        enemy.body.velocity.y = ENEMY_SPEED;
+        enemy.body.drag.x = 100;
+    }
+    
+    // Send another enemy soon
+    game.time.events.add(game.rnd.integerInRange(MIN_ENEMY_SPACING, MAX_ENEMY_SPACING), launchGreenEnemy);
 }
