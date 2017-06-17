@@ -4,6 +4,7 @@ var player;
 var greenEnemies;
 var starfield;
 var cursors;
+var explosions;
 var bank;
 var shipTrail;
 var bullets;
@@ -14,6 +15,7 @@ var ACCELERATION = 600;
 var DRAG = 400;
 var MAXSPEED = 400;
 
+
 function preload() {
     game.load.image('starfield', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/starfield.png');
     game.load.image('ship', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/player.png');
@@ -21,6 +23,7 @@ function preload() {
     game.load.image('enemy-green', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/enemy-green.png');
     game.load.spritesheet('explosion', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/explode.png', 128, 128);
 }
+
 
 function create() {
     //  The scrolling starfield background
@@ -55,6 +58,7 @@ function create() {
     greenEnemies.setAll('angle', 180);
     greenEnemies.forEach(function(enemy){
         addEnemyEmitterTrail(enemy);
+        enemy.body.setSize(enemy.width * 3 / 4, enemy.height * 3 / 4);
         enemy.events.onKilled.add(function(){
             enemy.trail.kill();
         });
@@ -76,7 +80,19 @@ function create() {
     shipTrail.setAlpha(1, 0.01, 800);
     shipTrail.setScale(0.05, 0.4, 0.05, 0.4, 2000, Phaser.Easing.Quintic.Out);
     shipTrail.start(false, 5000, 10);
+    
+    // An explosion pool
+    explosions = game.add.group();
+    explosions.enableBody = true;
+    explosions.physicsBodyType = Phaser.Physics.ARCADE;
+    explosions.createMultiple(30, 'explosion');
+    explosions.setAll('anchor.x', 0.5);
+    explosions.setAll('anchor.y', 0.5);
+    explosions.forEach(function(explosion) {
+        explosion.animations.add('explosion');
+    });
 }
+
 
 function update() {
     // Scroll the background
@@ -126,12 +142,22 @@ function update() {
     
     // Keep the shipTrail lined up with the ship
     shipTrail.x = player.x;
+    
+    // Check collisions
+    game.physics.arcade.overlap(player, greenEnemies, shipCollide, null, this);
+    game.physics.arcade.overlap(greenEnemies, bullets, hitEnemy, null, this);
 }
+
 
 function render() {
-
+//    for (var i = 0; i < greenEnemies.length; i++)
+//        {
+//            game.debug.body(greenEnemies.children[i]);
+//        }
+//    game.debug.body(player);
 }
-    
+
+
 function fireBullet() {
     // To avoid them being allowed to fire too fast we set a time limit
     if (game.time.now > bulletTimer)
@@ -155,6 +181,7 @@ function fireBullet() {
         }
     }
 }
+
 
 function launchGreenEnemy() {
     var MIN_ENEMY_SPACING = 300;
@@ -187,6 +214,8 @@ function launchGreenEnemy() {
     // Send another enemy soon
     game.time.events.add(game.rnd.integerInRange(MIN_ENEMY_SPACING, MAX_ENEMY_SPACING), launchGreenEnemy);
 }
+
+
 function addEnemyEmitterTrail(enemy) {
     var enemyTrail = game.add.emitter(enemy.x, player.y - 10, 100);
     enemyTrail.width = 10;
@@ -195,5 +224,26 @@ function addEnemyEmitterTrail(enemy) {
     enemyTrail.setRotation(50, -50);
     enemyTrail.setAlpha(0.4, 0, 800);
     enemyTrail.setScale(0.01, 0.1, 0.01, 0.1, 1000, Phaser.Easing.Quintic.Out);
-    enemyTrail = enemyTrail;
+    enemy.trail = enemyTrail;
+}
+
+
+function shipCollide(player, enemy) {
+    var explosion = explosions.getFirstExists(false);
+    explosion.reset(enemy.body.x + enemy.body.halfWidth, enemy.body.y + enemy.body.halfHeight);
+    explosion.body.velocity.y = enemy.body.velocity.y;
+    explosion.alpha = 0.7;
+    explosion.play('explosion', 30, false, true);
+    enemy.kill();
+}
+
+
+function hitEnemy(enemy, bullet) {
+    var explosion = explosions.getFirstExists(false);
+    explosion.reset(bullet.body.x + bullet.body.halfWidth, bullet.body.y + bullet.body.halfHeight);
+    explosion.body.velocity.y - enemy.body.velocity.y;
+    explosion.alpha = 0.7;
+    explosion.play('explosion', 30, false, true);
+    enemy.kill();
+    bullet.kill()
 }
