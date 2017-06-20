@@ -320,8 +320,8 @@ function restart() {
     player.revive();
     player.health = 100;
     shields.render();
-    //score = 0;
-    //scoreText.render();
+    score = 0;
+    scoreText.render();
     
     // Hide the text
     gameOver.visible = false;
