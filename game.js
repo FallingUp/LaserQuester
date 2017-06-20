@@ -27,7 +27,7 @@ function preload() {
     game.load.image('bullet', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/bullet.png');
     game.load.image('enemy-green', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/enemy-green.png');
     game.load.spritesheet('explosion', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/explode.png', 128, 128);
-    game.load.bitmapFont('spacefont', '/assets/spacefont/spacefont.png', '/assets/spacefont/spacefont.xml');
+    game.load.bitmapFont('spacefont', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/spacefont/spacefont.png', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/spacefont/spacefont.xml');
 }
 
 
