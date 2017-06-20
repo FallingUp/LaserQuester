@@ -88,13 +88,14 @@ function create() {
     // Blue enemy's bullets
     blueEnemyBullets = game.add.group();
     blueEnemyBullets.enableBody = true;
-    blueEnemies.physicsBodyType = Phaser.Physics.ARCADE;
-    blueEnemies.createMultiple(30, 'blueEnemyBullet');
-    blueEnemyBullets.callAll('alpha', 0.9);
-    blueEnemyBullets.callAll('anchor.x', 0.5);
-    blueEnemyBullets.callAll('anchor.y', 0.5);
-    blueEnemyBullets.callAll('outOfBoundsKill', true);
-    blueEnemyBullets.callAll('checkWorldBounds', true);
+    blueEnemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
+    blueEnemyBullets.createMultiple(30, 'blueEnemyBullet');
+    blueEnemyBullets.callAll('crop', null, {x: 90, y: 0, width: 90, height: 70});
+    blueEnemyBullets.setAll('alpha', 0.9);
+    blueEnemyBullets.setAll('anchor.x', 0.5);
+    blueEnemyBullets.setAll('anchor.y', 0.5);
+    blueEnemyBullets.setAll('outOfBoundsKill', true);
+    blueEnemyBullets.setAll('checkWorldBounds', true);
     blueEnemyBullets.forEach(function(enemy){
         enemy.body.setSize(20, 20);
     });
@@ -217,7 +218,7 @@ function update() {
     game.physics.arcade.overlap(greenEnemies, bullets, hitEnemy, null, this);
     
     game.physics.arcade.overlap(player, blueEnemies, shipCollide, null, this);
-    game.physics.arcade.overlap(bullets, blueEnemies, hitenemy, null, this);
+    game.physics.arcade.overlap(bullets, blueEnemies, hitEnemy, null, this);
     
     game.physics.arcade.overlap(blueEnemyBullets, player, enemyHitsPlayer, null, this);
     
@@ -310,7 +311,7 @@ function launchGreenEnemy() {
 }
 
 function launchBlueEnemy() {
-    var. startingX = game.rnd.integerInRange(100, game.width - 100);
+    var startingX = game.rnd.integerInRange(100, game.width - 100);
     var verticalSpeed = 180;
     var spread = 60;
     var frequency = 70;
@@ -323,7 +324,7 @@ function launchBlueEnemy() {
         var enemy = blueEnemies.getFirstExists(false);
         if (enemy) {
             enemy.startingX = startingX;
-            enemy.reset(game.width / 2, =verticalSpacing * i);
+            enemy.reset(game.width / 2, -verticalSpacing * i);
             enemy.body.velocity.y = verticalSpeed;
             
             // Set up firing
@@ -339,14 +340,14 @@ function launchBlueEnemy() {
                 
                 // Rotate enemies for illusion of banking
                 bank = Math.cos((this.y + 60) / frequency)
-                this.scale.x = 0.5 - Maths.abs(bank) / 8;
+                this.scale.x = 0.5 - Math.abs(bank) / 8;
                 this.angle = 180 - bank * 2;
                 
                 // Fire
                 enemyBullet = blueEnemyBullets.getFirstExists(false);
                 if (enemyBullet &&
                    this.alive &&
-                   this bullets &&
+                   this.bullets &&
                    this.y > game.width / 8 &&
                    game.time.now > firingDelay + this.lastShot) {
                     this.lastShot = game.time.now;
@@ -354,7 +355,7 @@ function launchBlueEnemy() {
                     enemyBullet.reset(this.x, this.y + this.height / 2);
                     enemyBullet.damageAmount = this.damageAmount;
                     var angle = game.physics.arcade.moveToObject(enemyBullet, player, bulletSpeed);
-                    enemyBullet.angle = game.math.radTpDeg(angle);
+                    enemyBullet.angle = game.math.radToDeg(angle);
                 }
                 
                 // Kill enemies once they go off screen
@@ -411,7 +412,7 @@ function hitEnemy(enemy, bullet) {
 
 function enemyHitsPlayer (player, bullet) {
     var explosion = explosions.getFirstExists(false);
-    explosion.reset(player.body.halfWidth, player.body.y + player.body.halfHeight);
+    explosion.reset(player.body.x + player.body.halfWidth, player.body.y + player.body.halfHeight);
     explosion.alpha = 0.7;
     explosion.play('explosion', 30, false, true);
     bullet.kill();
@@ -425,7 +426,7 @@ function restart() {
     greenEnemies.callAll('kill');
     game.time.events.remove(greenEnemyLaunchTimer);
     game.time.events.add(1000, launchGreenEnemy);
-    blueEnemyBullets.callAll('kill')
+    blueEnemyBullets.callAll('kill');
     
     blueEnemies.callAll('kill');
     game.time.events.remove(blueEnemyLaunchTimer);
