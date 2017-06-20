@@ -11,6 +11,8 @@ var bullets;
 var fireButton;
 var bulletTimer = 0;
 var shields;
+var score = 0;
+var scoreText;
 var greenEnemyLaunchTimer;
 var gameOver;
 
@@ -25,6 +27,7 @@ function preload() {
     game.load.image('bullet', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/bullet.png');
     game.load.image('enemy-green', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/enemy-green.png');
     game.load.spritesheet('explosion', 'https://raw.githubusercontent.com/FallingUp/LaserQuester/master/assets/explode.png', 128, 128);
+    game.load.bitmapFont('spacefont', '/assets/spacefont/spacefont.png', '/assets/spacefont/spacefont.xml');
 }
 
 
@@ -104,14 +107,23 @@ function create() {
     });
     
     // Shields stat
-    shields = game.add.text(game.world.width - 150, 10, 'Shields: ' + player.health + '%', { font: '20px Arial', fill: '#fff' });
+    shields = game.add.bitmapText(game.world.width - 250, 10, 'spacefont', '' + player.health + '%', 50);
     shields.render = function () {
         shields.text = 'Shields: ' + Math.max(player.health, 0) + '%';
     };
+    shields.render();
+    
+    // Score
+    scoreText = game.add.bitmapText(10, 10, 'spacefont', '', 50);
+    scoreText.render = function () {
+        scoreText.text = 'Score: ' + score;
+    };
+    scoreText.render();
     
     // Game over text
-    gameOver = game.add.text(game.world.centerX, game.world.centerY, 'GAME OVER!', { font: '84px Arial', fill: '#fff' });
-    gameOver.anchor.setTo(0.5, 0.5);
+    gameOver = game.add.bitmapText(game.world.centerX, game.world.centerY, 'spacefont', 'GAME OVER!', 110);
+    gameOver.x = gameOver.x - gameOver.textWidth / 2;
+    gameOver.y = gameOver.y - gameOver.textHeight / 3;
     gameOver.visible = false;
 }
 
@@ -172,6 +184,7 @@ function update() {
     // Game over?
     if (! player.alive && gameOver.visible === false) {
         gameOver.visible = true;
+        gameOver.alpha = 0;
         var fadeInGameOver = game.add.tween(gameOver);
         fadeInGameOver.to({alpha: 1}, 1000, Phaser.Easing.Quintic.Out);
         fadeInGameOver.onComplete.add(setResetHandlers);
@@ -290,6 +303,10 @@ function hitEnemy(enemy, bullet) {
     explosion.play('explosion', 30, false, true);
     enemy.kill();
     bullet.kill()
+    
+    // Increase score
+    score += enemy.damageAmount * 10;
+    scoreText.render()
 }
 
 
@@ -303,8 +320,8 @@ function restart() {
     player.revive();
     player.health = 100;
     shields.render();
-    score = 0;
-    scoreText.render();
+    //score = 0;
+    //scoreText.render();
     
     // Hide the text
     gameOver.visible = false;
