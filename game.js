@@ -430,6 +430,7 @@ function restart() {
     
     blueEnemies.callAll('kill');
     game.time.events.remove(blueEnemyLaunchTimer);
+    game.time.events.add(1000, launchBlueEnemy);
     
     // Revive the player
     player.revive();
