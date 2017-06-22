@@ -16,7 +16,9 @@ var shields;
 var score = 0;
 var scoreText;
 var greenEnemyLaunchTimer;
+var greenEnemySpacing = 1000;
 var blueEnemyLaunchTimer;
+var blueEnemyLaunched = false;
 var gameOver;
 
 var ACCELERATION = 600;
@@ -113,8 +115,6 @@ function create() {
     blueEnemies.forEach(function(enemy){
         enemy.damageAmount = 40;
     });
-    
-    game.time.events.add(1000, launchBlueEnemy);
     
     // And some controls to play the game with
     cursors = game.input.keyboard.createCursorKeys();
@@ -279,8 +279,6 @@ function fireBullet() {
 
 
 function launchGreenEnemy() {
-    var MIN_ENEMY_SPACING = 300;
-    var MAX_ENEMY_SPACING = 3000;
     var ENEMY_SPEED = 300;
     
     var enemy = greenEnemies.getFirstExists(false);
@@ -307,7 +305,7 @@ function launchGreenEnemy() {
     }
     
     // Send another enemy soon
-    greenEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(MIN_ENEMY_SPACING, MAX_ENEMY_SPACING), launchGreenEnemy);
+    greenEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(greenEnemySpacing, greenEnemySpacing + 1000), launchGreenEnemy);
 }
 
 function launchBlueEnemy() {
@@ -317,7 +315,7 @@ function launchBlueEnemy() {
     var frequency = 70;
     var verticalSpacing = 70;
     var numEnemiesInWave = 5;
-    var timeBetweenWaves = 7000;
+    var timeBetweenWaves = 2500;
     
     // Launch wave
     for (var i =0; i < numEnemiesInWave; i++) {
@@ -367,7 +365,7 @@ function launchBlueEnemy() {
     }
     
     // Send another wave soon
-    blueEnemyLaunchTimer = game.time.events.add(timeBetweenWaves, launchBlueEnemy);
+    blueEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(timeBetweenWaves, timeBetweenWaves + 4000), launchBlueEnemy);
 }
 
 
@@ -407,7 +405,18 @@ function hitEnemy(enemy, bullet) {
     
     // Increase score
     score += enemy.damageAmount * 10;
-    scoreText.render()
+    scoreText.render();
+	
+	// Pacing
+	// Enemies come quicker as score increases
+	greenEnemySpacing *= 0.9;
+	// Blue enemies come in after a score of 1000
+	if (!blueEnemyLaunched && score > 1000) {
+		blueEnemyLaunched = true;
+		launchBlueEnemy();
+		// Slow green enemies down now that there are other enemies
+		greenEnemySpacing *= 2;
+	}
 }
 
 function enemyHitsPlayer (player, bullet) {
@@ -426,11 +435,9 @@ function restart() {
     greenEnemies.callAll('kill');
     game.time.events.remove(greenEnemyLaunchTimer);
     game.time.events.add(1000, launchGreenEnemy);
+	blueEnemies.callAll('kill');
     blueEnemyBullets.callAll('kill');
-    
-    blueEnemies.callAll('kill');
-    game.time.events.remove(blueEnemyLaunchTimer);
-    game.time.events.add(1000, launchBlueEnemy);
+	game.time.events.remove(blueEnemyLaunchTimer);
     
     // Revive the player
     player.revive();
@@ -441,4 +448,8 @@ function restart() {
     
     // Hide the text
     gameOver.visible = false;
+	
+	// Reset pacing
+	greenEnemySpacing = 1000;
+	blueEnemyLaunched = false;
 }
